@@ -50,7 +50,7 @@ for msg in consumer:
        meme_id = db.memes_info.insert_one(meme_rec)
        print("Data inserted with record ids", meme_id)
 
-       subprocess.call(['sh', './test.sh'])
+       #subprocess.call(['sh', './test.sh'])
 
     except:
        print("Could not insert into MongoDB")
