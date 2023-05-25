@@ -38,24 +38,6 @@ except:
 
 consumer = KafkaConsumer('test',bootstrap_servers=['my-kafka-0.my-kafka-headless.okteto-yacruz.svc.cluster.local:9092'])
 # Parse received data from Kafka
-# Create dictionary and ingest data into MongoDB
-    try:
-       agg_result= db.memes_info.aggregate(
-       [{
-         "$group" : 
-         {  "_id" : "$name", 
-            "n"    : {"$sum": 1}
-         }}
-       ])
-       db.memes_summary.delete_many({})
-       for i in agg_result:
-         print(i)
-         summary_id = db.memes_summary.insert_one(i)
-         print("Summary inserted with record ids", summary_id)
-
-    except Exception as e:
-       print(f'group by caught {type(e)}: ')
-       print(e)
     
 for msg in consumer:
     record = json.loads(msg.value)
@@ -74,5 +56,21 @@ for msg in consumer:
     except:
        print("Could not insert into MongoDB")
     
-    
-   
+    # Create dictionary and ingest data into MongoDB
+    try:
+       agg_result= db.memes_info.aggregate(
+       [{
+         "$group" : 
+         {  "_id" : "$name", 
+            "n"    : {"$sum": 1}
+         }}
+       ])
+       db.memes_summary.delete_many({})
+       for i in agg_result:
+         print(i)
+         summary_id = db.memes_summary.insert_one(i)
+         print("Summary inserted with record ids", summary_id)
+
+    except Exception as e:
+       print(f'group by caught {type(e)}: ')
+       print(e)
