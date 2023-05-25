@@ -39,25 +39,22 @@ except:
 consumer = KafkaConsumer('test',bootstrap_servers=['my-kafka-0.my-kafka-headless.okteto-yacruz.svc.cluster.local:9092'])
 # Parse received data from Kafka
 try:
-        agg_result =db.memes_info.agregate(
-            [{
-                
-                "$group" :
-                
-                {
-                    "_id": "$name",
-                    "n"  : {"$sum" : 1}
-                }
-                }])
-        
-        db.memes_summary.delete_many({})
-        for i in agg_result:
-            print (i)
-            summary_id = db.memes_suammry.insert_one(i)
-            print("Sumary inserted with record ids", summary_id)
-    except Exception as e:
-        print(f'group by caunght {type(e)}: ')
-        print(e)
+    agg_result =db.memes_info.agregate(
+        [{
+            "$group" :
+            {
+                "_id": "$name",
+                "n"  : {"$sum" : 1}
+            }
+        }])
+    db.memes_summary.delete_many({})
+    for i in agg_result:
+        print (i)
+        summary_id = db.memes_suammry.insert_one(i)
+        print("Sumary inserted with record ids", summary_id)
+except Exception as e:
+    print(f'group by caunght {type(e)}: ')
+    print(e)
     
 for msg in consumer:
     record = json.loads(msg.value)
