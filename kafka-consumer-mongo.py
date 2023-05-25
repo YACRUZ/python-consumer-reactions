@@ -38,25 +38,7 @@ except:
 
 consumer = KafkaConsumer('test',bootstrap_servers=['my-kafka-0.my-kafka-headless.okteto-yacruz.svc.cluster.local:9092'])
 # Parse received data from Kafka
-    
-for msg in consumer:
-    record = json.loads(msg.value)
-    print(record)
-    name = record['name']
-
-    # Create dictionary and ingest data into MongoDB
-    try:
-       meme_rec = {'name':name }
-       print (meme_rec)
-       meme_id = db.memes_info.insert_one(meme_rec)
-       print("Data inserted with record ids", meme_id)
-
-       #subprocess.call(['sh', './test.sh'])
-
-    except:
-       print("Could not insert into MongoDB")
-    
-    try:
+try:
         agg_result =db.memes_info.agregate(
             [{
                 
@@ -76,4 +58,23 @@ for msg in consumer:
     except Exception as e:
         print(f'group by caunght {type(e)}: ')
         print(e)
+    
+for msg in consumer:
+    record = json.loads(msg.value)
+    print(record)
+    name = record['name']
+
+    # Create dictionary and ingest data into MongoDB
+    try:
+       meme_rec = {'name':name }
+       print (meme_rec)
+       meme_id = db.memes_info.insert_one(meme_rec)
+       print("Data inserted with record ids", meme_id)
+
+       #subprocess.call(['sh', './test.sh'])
+
+    except:
+       print("Could not insert into MongoDB")
+    
+    
    
