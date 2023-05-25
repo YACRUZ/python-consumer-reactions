@@ -57,21 +57,23 @@ for msg in consumer:
        print("Could not insert into MongoDB")
     
     try:
-        
-        agg_result= db.memes_info.aggregate(
+        agg_result =db.memes_info.agregate(
             [{
-                "group" :
-                { "_id" : "$name",
-                 "n" : {"$sum" : 1}
-                }}
-            ])
-        db.memes_summary.delete_many({})
+                
+                "$group" :
+                
+                {
+                    "_id": "$name",
+                    "n"  : {"$sum" : 1}
+                }
+                }])
         
+        db.memes_summary.delete_many({})
         for i in agg_result:
-            print(i)
-            summary_id = db.memes_summary.insert_on(i)
-            print("Summary inserted with record ids", summary_id)
+            print (i)
+            summary_id = db.memes_suammry.insert_one(i)
+            print("Sumary inserted with record ids", summary_id)
     except Exception as e:
-        print(f'group by caught {type(e)}:')
+        print(f'group by caunght {type(e)}: ')
         print(e)
    
